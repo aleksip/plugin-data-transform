@@ -1,0 +1,28 @@
+{
+    "name": "aleksip/plugin-data-transform",
+    "description": "Data Transform Plugin for Pattern Lab PHP",
+    "keywords": ["pattern lab", "plugin", "drupal"],
+    "homepage": "https://github.com/aleksip/plugin-data-transform",
+    "license": "GPL-2.0+",
+    "type": "patternlab-plugin",
+    "authors": [
+        {
+            "name": "Aleksi Peebles"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/aleksip/plugin-data-transform/issues",
+        "source": "https://github.com/aleksip/plugin-data-transform/releases"
+    },
+    "autoload": {
+        "psr-0": {
+            "aleksip\\DataTransformPlugin\\": "src/",
+            "Drupal\\Component\\Render\\": "src/",
+            "Drupal\\Component\\Utility\\": "src/",
+            "Drupal\\Core\\Template\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.5.9"
+    }
+}
