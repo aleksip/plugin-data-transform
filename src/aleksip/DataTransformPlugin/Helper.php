@@ -84,7 +84,7 @@ class Helper extends PatternDataHelper
                         $patternData = $this->getProcessedPatternSpecificData($pattern, $value['include()']['with']);
                     }
                     else {
-                        $patternData = $value['include()']['data'];
+                        $patternData = $value['include()']['with'];
                     }
                     $data[$key] = $this->renderPattern($pattern, $patternData);
                 }
