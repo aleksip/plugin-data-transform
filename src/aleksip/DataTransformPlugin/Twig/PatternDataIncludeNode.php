@@ -17,6 +17,6 @@ class PatternDataIncludeNode extends \Twig_Node_Include
           $originalNode->getNodeTag()
         );
 
-        $this->data = $data;
+        $this->setData($data);
     }
 }

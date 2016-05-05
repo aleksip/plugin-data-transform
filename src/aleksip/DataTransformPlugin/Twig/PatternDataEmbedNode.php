@@ -18,6 +18,6 @@ class PatternDataEmbedNode extends \Twig_Node_Embed
           $originalNode->getNodeTag()
         );
 
-        $this->data = $data;
+        $this->setData($data);
     }
 }
