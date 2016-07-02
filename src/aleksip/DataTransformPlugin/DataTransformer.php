@@ -5,58 +5,82 @@ namespace aleksip\DataTransformPlugin;
 use Drupal\Core\Template\Attribute;
 use PatternLab\Data;
 use PatternLab\PatternData;
-use PatternLab\PatternData\Helper as PatternDataHelper;
 use PatternLab\PatternEngine;
 
-class Helper extends PatternDataHelper
+class DataTransformer
 {
-    protected $patternLoader;
-    protected $store;
+    protected $env;
     protected $reservedKeys;
+    protected $patternDataStore;
     protected $processed;
 
-    public function __construct($options = array())
+    public function __construct(\Twig_Environment $env)
     {
-        parent::__construct($options);
-        $patternEngineBasePath = PatternEngine::getInstance()->getBasePath();
-        $patternLoaderClass = $patternEngineBasePath . '\Loaders\PatternLoader';
-        $this->patternLoader = new $patternLoaderClass($options);
-        $this->store = PatternData::get();
+        $this->env = $env;
         // TODO: Add an accessor function for $reservedKeys to the Data class?
-        $this->reservedKeys = array("listItems","cacheBuster","patternLink","patternSpecific","patternLabHead","patternLabFoot");
+        $this->reservedKeys = array("cacheBuster","link","patternSpecific","patternLabHead","patternLabFoot");
+        $this->patternDataStore = PatternData::get();
         $this->processed = array();
     }
 
     public function run()
     {
-        foreach (array_keys($this->store) as $patternStoreKey) {
-            $this->processPattern($patternStoreKey);
+        // Process global data.
+        $dataStore = $this->processData(Data::get());
+        Data::replaceStore($dataStore);
+        // Process pattern specific data.
+        foreach (array_keys($this->patternDataStore) as $pattern) {
+            $this->processPattern($pattern);
         }
     }
 
-    protected function isProcessed($patternStoreKey)
+    protected function isProcessed($pattern)
     {
-        return isset($this->processed[$patternStoreKey]);
+        return isset($this->processed[$pattern]);
     }
 
-    protected function setProcessed($patternStoreKey)
+    protected function setProcessed($pattern)
     {
-        $this->processed[$patternStoreKey] = true;
+        $this->processed[$pattern] = true;
     }
 
-    protected function processPattern($patternStoreKey)
+    protected function processPattern($pattern)
     {
-        $patternStoreData = $this->store[$patternStoreKey];
-        if ($patternStoreData["category"] == "pattern" && !$this->isProcessed($patternStoreKey)) {
-            $data = Data::getPatternSpecificData($patternStoreKey);
-            foreach (array_keys($data) as $key) {
-                if (!in_array($key, $this->reservedKeys)) {
-                    $data = $this->processKey($data, $key);
+        if (
+            $this->isProcessed($pattern)
+            || !isset($this->patternDataStore[$pattern])
+            || $this->patternDataStore[$pattern]['category'] != 'pattern'
+        ) {
+            return;
+        }
+        $patternSpecificData =
+            $this->processData(Data::getPatternSpecificData($pattern))
+        ;
+        // Clone objects in possible default global data.
+        $dataStore = Data::get();
+        foreach (array_keys($patternSpecificData) as $key) {
+            if (!isset($dataStore['patternSpecific'][$pattern]['data'][$key])) {
+                // Value is default global data.
+                // TODO: Array support.
+                if (is_object($dataStore[$key])) {
+                    $patternSpecificData[$key] = clone $dataStore[$key];
                 }
             }
-            Data::setPatternData($patternStoreKey, $data);
-            $this->setProcessed($patternStoreKey);
         }
+        Data::initPattern($pattern);
+        Data::setPatternData($pattern, $patternSpecificData);
+        $this->setProcessed($pattern);
+    }
+
+    protected function processData($data)
+    {
+        foreach (array_keys($data) as $key) {
+            if (!in_array($key, $this->reservedKeys)) {
+                $data = $this->processKey($data, $key);
+            }
+        }
+
+        return $data;
     }
 
     protected function processKey($data, $key)
@@ -71,7 +95,7 @@ class Helper extends PatternDataHelper
             }
             elseif (isset($value['include()']) && is_array($value['include()']) && isset($value['include()']['pattern'])) {
                 $pattern = $value['include()']['pattern'];
-                if (is_string($pattern) && isset($this->store[$pattern])) {
+                if (is_string($pattern) && isset($this->patternDataStore[$pattern])) {
                     if (!isset($value['include()']['with']) || !is_array($value['include()']['with'])) {
                         if (!isset($value['include()']['only'])) {
                             $patternData = $this->getProcessedPatternSpecificData($pattern);
@@ -96,14 +120,14 @@ class Helper extends PatternDataHelper
                 $data[$key] = $value;
             }
         }
-        elseif (is_string($value) && isset($this->store[$value]) && $key !== 'pattern') {
+        elseif (is_string($value) && isset($this->patternDataStore[$value]) && $key !== 'pattern') {
             $data[$key] = $this->renderPattern($value, $this->getProcessedPatternSpecificData($value));
         }
 
         return $data;
     }
 
-    protected function getProcessedPatternSpecificData($pattern, $extraData = array())
+    public function getProcessedPatternSpecificData($pattern, $extraData = array())
     {
         $this->processPattern($pattern);
 
@@ -112,11 +136,11 @@ class Helper extends PatternDataHelper
 
     protected function renderPattern($pattern, $data)
     {
-        if (isset($this->store[$pattern]['patternRaw'])) {
-            $pattern = $this->patternLoader->render([
-                'pattern' => $this->store[$pattern]['patternRaw'],
-                'data' => $data
-            ]);
+        if (isset($this->patternDataStore[$pattern]['patternRaw'])) {
+            $pattern = $this->env->render(
+                $this->patternDataStore[$pattern]['patternRaw'],
+                $data
+            );
         }
 
         return $pattern;

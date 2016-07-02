@@ -1,5 +1,8 @@
 # Data Transform Plugin for Pattern Lab PHP
 
+This plugin now only works with Twig PatternEngine. You can use old 0.x versions of the plugin for Mustache PatternEngine.
+
+
 ## Installation
 
 To install and use the plugin run:
@@ -13,12 +16,12 @@ composer require aleksip/plugin-data-transform
 
 ### Pattern-specific data file support for included patterns
 
-Pattern Lab currently only supports global data files and a pattern-specific data file for the main pattern. This plugin adds pattern-specific data file support for included patterns. This feature only works with Twig PatternEngine.
+Pattern Lab currently only supports global data files and a pattern-specific data file for the main pattern. This plugin adds pattern-specific data file support for included patterns.
 
 
 ### Data transform functions
 
-Currently the plugin provides 3 transform functions for the data read by Pattern Lab. The examples provided are in JSON but Pattern Lab supports YAML too! These functions should work with both Twig and Mustache PatternEngines.
+Currently the plugin provides 3 transform functions for the data read by Pattern Lab. The examples provided are in JSON but Pattern Lab supports YAML too!
 
 
 #### Include pattern files
@@ -85,6 +88,11 @@ The value of `key` will be replaced with the joined strings. Note that in the ex
 ```
 
 The value of `key` will be replaced with an [Attribute object](https://www.drupal.org/node/2513632).
+
+
+## Global data and includes
+
+If you are using global data from the `_data` directory and includes (in data files or Twig templates) please note that 1) pattern-specific data overwrites data from parent patterns by default and that 2) global data for an included pattern is considered to be pattern-specific data. If you want to override pattern-specific data of an included pattern you can do that by using the `with` keyword.
 
 
 ## More examples
