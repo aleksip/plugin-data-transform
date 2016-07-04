@@ -56,12 +56,10 @@ class DataTransformer
         $patternSpecificData =
             $this->processData(Data::getPatternSpecificData($pattern))
         ;
-        // Clone objects in possible default global data.
         $dataStore = Data::get();
         foreach (array_keys($patternSpecificData) as $key) {
             if (!isset($dataStore['patternSpecific'][$pattern]['data'][$key])) {
                 // Value is default global data.
-                // TODO: Array support.
                 if (is_object($dataStore[$key])) {
                     $patternSpecificData[$key] = clone $dataStore[$key];
                 }
@@ -137,6 +135,9 @@ class DataTransformer
     protected function renderPattern($pattern, $data)
     {
         if (isset($this->patternDataStore[$pattern]['patternRaw'])) {
+            foreach (array_keys($data) as $key) {
+                $data = $this->cloneObjects($data, $key);
+            }
             $pattern = $this->env->render(
                 $this->patternDataStore[$pattern]['patternRaw'],
                 $data
@@ -144,5 +145,21 @@ class DataTransformer
         }
 
         return $pattern;
+    }
+
+    protected function cloneObjects($data, $key)
+    {
+        $value = $data[$key];
+        if (is_array($value)) {
+            foreach (array_keys($value) as $subKey) {
+                $value = $this->cloneObjects($value, $subKey);
+            }
+            $data[$key] = $value;
+        }
+        elseif (is_object($value)) {
+            $data[$key] = clone $value;
+        }
+
+        return $data;
     }
 }
