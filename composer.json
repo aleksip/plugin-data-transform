@@ -24,6 +24,7 @@
     },
     "require": {
         "php": ">=5.5.9",
+        "pattern-lab/core": "^2.6.3",
         "pattern-lab/patternengine-twig": "^2.0.0"
     }
 }

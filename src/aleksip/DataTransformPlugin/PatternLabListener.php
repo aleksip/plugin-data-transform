@@ -4,28 +4,24 @@ namespace aleksip\DataTransformPlugin;
 
 use aleksip\DataTransformPlugin\Twig\PatternDataNodeVisitor;
 use PatternLab\Listener;
-use PatternLab\PatternData\Event;
 use PatternLab\PatternEngine\Twig\TwigUtil;
 
 class PatternLabListener extends Listener
 {
     public function __construct()
     {
-        $this->addListener('patternData.codeHelperStart', 'runHelper');
-        $this->addListener('twigPatternLoader.customize', 'addNodeVisitor');
+        $this->addListener(
+            'twigPatternLoader.customize',
+            'twigPatternLoaderCustomize'
+        );
     }
 
-    public function runHelper(Event $event)
+    public function twigPatternLoaderCustomize()
     {
-        $options = $event->getOptions();
-        $helper = new Helper($options);
-        $helper->run();
-    }
-
-    public function addNodeVisitor()
-    {
-        $instance = TwigUtil::getInstance();
-        $instance->addNodeVisitor(new PatternDataNodeVisitor());
-        TwigUtil::setInstance($instance);
+        $env = TwigUtil::getInstance();
+        $dt = new DataTransformer($env);
+        $env->addNodeVisitor(new PatternDataNodeVisitor($dt));
+        TwigUtil::setInstance($env);
+        $dt->run();
     }
 }
