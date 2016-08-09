@@ -53,6 +53,7 @@ class DataTransformer
         ) {
             return;
         }
+        $this->setProcessed($pattern);
         $patternSpecificData =
             $this->processData(Data::getPatternSpecificData($pattern))
         ;
@@ -67,7 +68,6 @@ class DataTransformer
         }
         Data::initPattern($pattern);
         Data::setPatternData($pattern, $patternSpecificData);
-        $this->setProcessed($pattern);
     }
 
     protected function processData($data)
