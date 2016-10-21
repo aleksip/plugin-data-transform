@@ -48,7 +48,11 @@ trait PatternDataNodeTrait
 
     protected function addTemplateArguments(\Twig_Compiler $compiler)
     {
-        if (null === $this->getNode('variables')) {
+        $variables = $this->hasNode('variables')
+            ? $this->getNode('variables')
+            : null
+        ;
+        if (null === $variables) {
             if (false === $this->getAttribute('only')) {
                 $compiler
                     ->raw('array_merge($context, ')
@@ -64,11 +68,11 @@ trait PatternDataNodeTrait
                 ->raw('array_merge($context, ')
                 ->raw($this->data)
                 ->raw(', ')
-                ->subcompile($this->getNode('variables'))
+                ->subcompile($variables)
                 ->raw(')')
             ;
         } else {
-            $compiler->subcompile($this->getNode('variables'));
+            $compiler->subcompile($variables);
         }
     }
 }

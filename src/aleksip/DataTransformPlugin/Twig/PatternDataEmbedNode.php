@@ -8,10 +8,14 @@ class PatternDataEmbedNode extends \Twig_Node_Embed
 
     public function __construct(\Twig_Node_Embed $originalNode, $data)
     {
+        $variables = $originalNode->hasNode('variables')
+            ? $originalNode->getNode('variables')
+            : null
+        ;
         parent::__construct(
           $originalNode->getAttribute('filename'),
           $originalNode->getAttribute('index'),
-          $originalNode->getNode('variables'),
+          $variables,
           $originalNode->getAttribute('only'),
           $originalNode->getAttribute('ignore_missing'),
           $originalNode->getLine(),
