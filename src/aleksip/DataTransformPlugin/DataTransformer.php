@@ -5,14 +5,14 @@ namespace aleksip\DataTransformPlugin;
 use Drupal\Core\Template\Attribute;
 use PatternLab\Data;
 use PatternLab\PatternData;
-use PatternLab\PatternEngine;
 
 class DataTransformer
 {
+    protected static $processed = array();
+
     protected $env;
     protected $reservedKeys;
     protected $patternDataStore;
-    protected $processed;
 
     public function __construct(\Twig_Environment $env)
     {
@@ -20,7 +20,6 @@ class DataTransformer
         // TODO: Add an accessor function for $reservedKeys to the Data class?
         $this->reservedKeys = array("cacheBuster","link","patternSpecific","patternLabHead","patternLabFoot");
         $this->patternDataStore = PatternData::get();
-        $this->processed = array();
     }
 
     public function run()
@@ -36,12 +35,12 @@ class DataTransformer
 
     protected function isProcessed($pattern)
     {
-        return isset($this->processed[$pattern]);
+        return isset(self::$processed[$pattern]);
     }
 
     protected function setProcessed($pattern)
     {
-        $this->processed[$pattern] = true;
+        self::$processed[$pattern] = true;
     }
 
     protected function processPattern($pattern)
