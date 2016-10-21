@@ -8,6 +8,9 @@ use PatternLab\PatternEngine\Twig\TwigUtil;
 
 class PatternLabListener extends Listener
 {
+    protected $dt;
+    protected $nv;
+
     public function __construct()
     {
         $this->addListener(
@@ -18,10 +21,12 @@ class PatternLabListener extends Listener
 
     public function twigPatternLoaderCustomize()
     {
+        $this->dt ?: $this->dt = new DataTransformer();
+        $this->nv ?: $this->nv = new PatternDataNodeVisitor($this->dt);
+
         $env = TwigUtil::getInstance();
-        $dt = new DataTransformer($env);
-        $env->addNodeVisitor(new PatternDataNodeVisitor($dt));
+        $env->addNodeVisitor($this->nv);
         TwigUtil::setInstance($env);
-        $dt->run();
+        $this->dt->run($env);
     }
 }

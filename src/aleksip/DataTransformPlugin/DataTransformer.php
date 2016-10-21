@@ -10,20 +10,24 @@ class DataTransformer
 {
     protected static $processed = array();
 
-    protected $env;
     protected $reservedKeys;
     protected $patternDataStore;
+    protected $env;
+    protected $hasRun;
 
-    public function __construct(\Twig_Environment $env)
+    public function __construct()
     {
-        $this->env = $env;
         // TODO: Add an accessor function for $reservedKeys to the Data class?
         $this->reservedKeys = array("cacheBuster","link","patternSpecific","patternLabHead","patternLabFoot");
         $this->patternDataStore = PatternData::get();
     }
 
-    public function run()
+    public function run(\Twig_Environment $env)
     {
+        $this->env = $env;
+        if ($this->hasRun) {
+            return;
+        }
         // Process global data.
         $dataStore = $this->processData(Data::get());
         Data::replaceStore($dataStore);
@@ -31,6 +35,7 @@ class DataTransformer
         foreach (array_keys($this->patternDataStore) as $pattern) {
             $this->processPattern($pattern);
         }
+        $this->hasRun = true;
     }
 
     protected function isProcessed($pattern)
