@@ -37,13 +37,18 @@ trait PatternDataNodeTrait
                 $this->setData($v);
             }
             $this->data .= ')';
-        } elseif ($data instanceof Attribute) {
-            $this->data .= 'new \Drupal\Core\Template\Attribute(';
-            $this->setData($data->toArray());
+        } elseif (is_object($data)) {
+            $this->data .= 'unserialize(';
+            $this->data .= $this->string(serialize($data));
             $this->data .= ')';
         } else {
-            $this->data .= sprintf('"%s"', addcslashes($data, "\0\t\"\$\\"));
+            $this->data .= $this->string($data);
         }
+    }
+
+    protected function string($value)
+    {
+        return sprintf('"%s"', addcslashes($value, "\0\t\"\$\\"));
     }
 
     protected function addTemplateArguments(\Twig_Compiler $compiler)
