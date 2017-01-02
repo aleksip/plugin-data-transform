@@ -119,4 +119,4 @@ Please note that global data from the `_data` directory is considered to be patt
 
 ## More examples
 
-All features provided by this plugin are used extensively in [Shila Drupal Theme StarterKit](https://github.com/aleksip/starterkit-shila-drupal-theme).
+Most features provided by this plugin are used in [Shila Drupal theme](https://github.com/aleksip/shila-drupal-theme).
