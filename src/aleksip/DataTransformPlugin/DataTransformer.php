@@ -3,6 +3,7 @@
 namespace aleksip\DataTransformPlugin;
 
 use Drupal\Core\Template\Attribute;
+use Drupal\Core\Url;
 use PatternLab\Data;
 use PatternLab\PatternData;
 
@@ -94,6 +95,10 @@ class DataTransformer
             }
             if (isset($value['Attribute()']) && is_array($value['Attribute()'])) {
                 $data[$key] = new Attribute($value['Attribute()']);
+            }
+            elseif (isset($value['Url()']['url'])) {
+              $options = isset($value['Url()']['options']) && is_array($value['Url()']['options']) ? $value['Url()']['options'] : [];
+              $data[$key] = Url::fromUri($value['Url()']['url'], $options);
             }
             elseif (isset($value['include()']) && is_array($value['include()']) && isset($value['include()']['pattern'])) {
                 $pattern = $value['include()']['pattern'];
