@@ -19,6 +19,7 @@
             "aleksip\\DataTransformPlugin\\": "src/",
             "Drupal\\Component\\Render\\": "src/",
             "Drupal\\Component\\Utility\\": "src/",
+            "Drupal\\Core\\": "src/",
             "Drupal\\Core\\Template\\": "src/"
         }
     },
