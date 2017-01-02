@@ -21,7 +21,7 @@ Pattern Lab core only supports global data files and a pattern-specific data fil
 
 ### Data transform functions
 
-Currently the plugin provides 3 transform functions for the data read by Pattern Lab. The examples provided are in JSON but Pattern Lab supports YAML too!
+Currently the plugin provides four transform functions for the data read by Pattern Lab. The examples provided are in JSON but Pattern Lab supports YAML too!
 
 
 #### Include pattern files
@@ -87,7 +87,29 @@ The value of `key` will be replaced with the joined strings. Note that in the ex
 }
 ```
 
-The value of `key` will be replaced with an [Attribute object](https://www.drupal.org/node/2513632).
+The value of `key` will be replaced with an [`Attribute` object](https://www.drupal.org/node/2513632).
+
+
+#### Create Drupal `Url` objects
+
+```json
+{
+    "key": {
+        "Url()": {
+            "url": "http://example.com",
+            "options": {
+                "attributes": {
+                    "Attribute()": {
+                        "class": ["link"]
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+The value of `key` will be replaced with an `Url` object. Note that in the example `attributes` will be replaced with an `Attribute` object before the `Url` object is created.
 
 
 ## Global data and includes
