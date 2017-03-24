@@ -7,6 +7,8 @@ use Drupal\Core\Url;
 use PatternLab\Data;
 use PatternLab\PatternData;
 
+class PatternNotFoundException extends \Exception {}
+
 class DataTransformer
 {
     protected static $processed = array();
@@ -59,20 +61,26 @@ class DataTransformer
             return;
         }
         $this->setProcessed($pattern);
-        $patternSpecificData =
-            $this->processData(Data::getPatternSpecificData($pattern))
-        ;
-        $dataStore = Data::get();
-        foreach (array_keys($patternSpecificData) as $key) {
-            if (!isset($dataStore['patternSpecific'][$pattern]['data'][$key])) {
+        try {
+            $patternSpecificData =
+              $this->processData(Data::getPatternSpecificData($pattern));
+
+
+            $dataStore = Data::get();
+            foreach (array_keys($patternSpecificData) as $key) {
+              if (!isset($dataStore['patternSpecific'][$pattern]['data'][$key])) {
                 // Value is default global data.
                 if (is_object($dataStore[$key])) {
-                    $patternSpecificData[$key] = clone $dataStore[$key];
+                  $patternSpecificData[$key] = clone $dataStore[$key];
                 }
+              }
             }
+            Data::initPattern($pattern);
+            Data::setPatternData($pattern, $patternSpecificData);
         }
-        Data::initPattern($pattern);
-        Data::setPatternData($pattern, $patternSpecificData);
+        catch (PatternNotFoundException $exception) {
+            throw new PatternNotFoundException("Pattern '$pattern': " . $exception->getMessage());
+        }
     }
 
     protected function processData($data)
@@ -118,6 +126,9 @@ class DataTransformer
                         $patternData = $value['include()']['with'];
                     }
                     $data[$key] = $this->renderPattern($pattern, $patternData);
+                }
+                else {
+                  throw new PatternNotFoundException("Could not find pattern '$pattern' to include!");
                 }
             }
             elseif (isset($value['join()']) && is_array($value['join()'])) {
