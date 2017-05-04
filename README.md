@@ -53,6 +53,17 @@ Advanced syntax with support for passing variables and disabling access to the d
 In both examples the value of `key` will replaced with the rendered pattern.
 
 
+#### Include pseudo-pattern files
+
+It is also possible to include [pseudo-patterns](http://patternlab.io/docs/pattern-pseudo-patterns.html) using the shorthand partials syntax, by replacing the tilde (~) with a dash (-). So for example the pseudo-pattern `shila-card.html~variant.json` can be included like so:
+
+```json
+{
+    "key": "molecules-shila-card.html-variant"
+}
+```
+
+
 #### Join text values
 
 ```json
