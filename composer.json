@@ -3,7 +3,7 @@
     "description": "Data Transform Plugin for Pattern Lab PHP",
     "keywords": ["pattern lab", "plugin", "drupal"],
     "homepage": "https://github.com/aleksip/plugin-data-transform",
-    "license": "GPL-2.0+",
+    "license": "GPL-2.0-or-later",
     "type": "patternlab-plugin",
     "authors": [
         {
