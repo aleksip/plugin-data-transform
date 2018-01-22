@@ -3,6 +3,7 @@
 namespace aleksip\DataTransformPlugin;
 
 use aleksip\DataTransformPlugin\Twig\PatternDataNodeVisitor;
+use PatternLab\Config;
 use PatternLab\Listener;
 use PatternLab\PatternEngine\Twig\TwigUtil;
 
@@ -21,6 +22,11 @@ class PatternLabListener extends Listener
 
     public function twigPatternLoaderCustomize()
     {
+        $enabled = Config::getOption('plugins.dataTransform.enabled');
+        if (!is_null($enabled) && !((bool)$enabled)) {
+            return;
+        }
+
         $this->dt ?: $this->dt = new DataTransformer();
         $this->nv ?: $this->nv = new PatternDataNodeVisitor($this->dt);
 
