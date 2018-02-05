@@ -49,7 +49,7 @@ class PatternLabListener extends Listener
         $nodeVisitor = new PatternDataNodeVisitor($this->dataTransformer);
 
         $env = TwigUtil::getInstance();
-        $env->addNodeVisitor($this->nodeVisitor);
+        $env->addNodeVisitor($nodeVisitor);
         TwigUtil::setInstance($env);
 
         $this->dataTransformer->run(new Renderer($env));
