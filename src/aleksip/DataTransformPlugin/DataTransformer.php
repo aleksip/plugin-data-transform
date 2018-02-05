@@ -2,6 +2,7 @@
 
 namespace aleksip\DataTransformPlugin;
 
+use aleksip\DataTransformPlugin\Renderer;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use PatternLab\Data;
@@ -9,13 +10,16 @@ use PatternLab\PatternData;
 
 class PatternNotFoundException extends \Exception {}
 
+/**
+ * @author Aleksi Peebles <aleksi@iki.fi>
+ */
 class DataTransformer
 {
     protected static $processed = array();
 
     protected $reservedKeys;
     protected $patternDataStore;
-    protected $env;
+    protected $renderer;
     protected $hasRun;
 
     public function __construct()
@@ -25,12 +29,12 @@ class DataTransformer
         $this->patternDataStore = PatternData::get();
     }
 
-    public function run(\Twig_Environment $env)
+    public function run(Renderer $renderer)
     {
-        $this->env = $env;
         if ($this->hasRun) {
             return;
         }
+        $this->renderer = $renderer;
         // Process global data.
         $dataStore = $this->processData(Data::get());
         Data::replaceStore($dataStore);
@@ -158,7 +162,7 @@ class DataTransformer
             foreach (array_keys($data) as $key) {
                 $data = $this->cloneObjects($data, $key);
             }
-            $pattern = $this->env->render(
+            $pattern = $this->renderer->render(
                 $this->patternDataStore[$pattern]['patternRaw'],
                 $data
             );

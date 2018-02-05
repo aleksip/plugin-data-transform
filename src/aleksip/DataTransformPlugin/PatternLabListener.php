@@ -5,34 +5,60 @@ namespace aleksip\DataTransformPlugin;
 use aleksip\DataTransformPlugin\Twig\PatternDataNodeVisitor;
 use PatternLab\Config;
 use PatternLab\Listener;
+use PatternLab\PatternEngine;
 use PatternLab\PatternEngine\Twig\TwigUtil;
 
+/**
+ * @author Aleksi Peebles <aleksi@iki.fi>
+ */
 class PatternLabListener extends Listener
 {
-    protected $dt;
-    protected $nv;
+    /**
+     * @var DataTransformer
+     */
+    protected $dataTransformer;
 
     public function __construct()
     {
-        $this->addListener(
-            'twigPatternLoader.customize',
-            'twigPatternLoaderCustomize'
-        );
+        $this->addListener('patternData.codeHelperStart', 'dataTransformer');
+        $this->addListener('twigPatternLoader.customize', 'addNodeVisitor');
     }
 
-    public function twigPatternLoaderCustomize()
+    public function dataTransformer()
     {
-        $enabled = Config::getOption('plugins.dataTransform.enabled');
-        if (!is_null($enabled) && !((bool)$enabled)) {
+        if (!$this->isEnabled()) {
             return;
         }
 
-        $this->dt ?: $this->dt = new DataTransformer();
-        $this->nv ?: $this->nv = new PatternDataNodeVisitor($this->dt);
+        $this->dataTransformer = new DataTransformer();
+
+        if (Config::getOption('patternExtension') !== 'twig') {
+            $patternEngineBasePath = PatternEngine::getInstance()->getBasePath();
+            $patternLoaderClass = $patternEngineBasePath.'\Loaders\PatternLoader';
+            $patternLoader = new $patternLoaderClass(array());
+            $this->dataTransformer->run(new Renderer($patternLoader));
+        }
+    }
+
+    public function addNodeVisitor()
+    {
+        if (!$this->isEnabled()) {
+            return;
+        }
+
+        $nodeVisitor = new PatternDataNodeVisitor($this->dataTransformer);
 
         $env = TwigUtil::getInstance();
-        $env->addNodeVisitor($this->nv);
+        $env->addNodeVisitor($this->nodeVisitor);
         TwigUtil::setInstance($env);
-        $this->dt->run($env);
+
+        $this->dataTransformer->run(new Renderer($env));
+    }
+
+    protected function isEnabled()
+    {
+        $enabled = Config::getOption('plugins.dataTransform.enabled');
+
+        return (is_null($enabled) || (bool)$enabled);
     }
 }
