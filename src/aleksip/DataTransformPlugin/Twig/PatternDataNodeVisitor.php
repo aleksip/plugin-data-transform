@@ -6,11 +6,14 @@ use aleksip\DataTransformPlugin\DataTransformer;
 
 class PatternDataNodeVisitor extends \Twig_BaseNodeVisitor
 {
-    protected $dt;
+    /**
+     * @var DataTransformer
+     */
+    protected $dataTransformer;
 
-    public function __construct(DataTransformer $dt)
+    public function __construct(DataTransformer $dataTransformer)
     {
-        $this->dt = $dt;
+        $this->dataTransformer = $dataTransformer;
     }
 
     protected function doEnterNode(\Twig_Node $node, \Twig_Environment $env)
@@ -44,7 +47,7 @@ class PatternDataNodeVisitor extends \Twig_BaseNodeVisitor
                     $patternStoreKey = $patternType . "-" . $patternName;
                 }
 
-                $data = $this->dt->getProcessedPatternSpecificData($patternStoreKey);
+                $data = $this->dataTransformer->getProcessedPatternSpecificData($patternStoreKey);
                 if ($node instanceof \Twig_Node_Embed) {
                     $dataNode = new PatternDataEmbedNode($node, $data);
                 }
