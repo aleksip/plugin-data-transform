@@ -1,6 +1,6 @@
 # Data Transform Plugin for Pattern Lab
 
-This plugin now only works with Twig PatternEngine. You can use old 0.x versions of the plugin for Mustache PatternEngine.
+Since version 1.2.0 this plugin should once again work with all PatternEngines.
 
 
 ## Installation
@@ -16,7 +16,9 @@ composer require aleksip/plugin-data-transform
 
 ### Pattern-specific data file support for included patterns
 
-Pattern Lab core only supports global data files and a pattern-specific data file for the main pattern. This plugin adds pattern-specific data file support for included patterns.
+Pattern Lab core only supports global data files and a pattern-specific data file for the main pattern. This plugin adds pattern-specific data file support for included patterns. This feature works with the include function provided by this plugin with all PatternEngines and also with regular includes in template files with Twig PatternEngine.
+
+Please note that global data from the `_data` directory is considered to be pattern-specific data and will overwrite data inherited from a parent pattern. If you want to override data of an included pattern you can use the `with` keyword.
 
 
 ### Data transform functions
@@ -59,7 +61,7 @@ It is also possible to include [pseudo-patterns](http://patternlab.io/docs/patte
 
 ```json
 {
-    "key": "molecules-shila-card.html-variant"
+    "key": "molecules-shila-card-html-variant"
 }
 ```
 
@@ -70,11 +72,11 @@ It is also possible to include [pseudo-patterns](http://patternlab.io/docs/patte
 {
     "key": {
         "join()": [
-            "molecules-comment.html",
+            "molecules-comment-html",
             "<div class=\"indented\">",
-            "molecules-comment.html",
+            "molecules-comment-html",
             "</div>",
-            "molecules-comment.html"
+            "molecules-comment-html"
         ]
     }
 }
@@ -121,11 +123,6 @@ The value of `key` will be replaced with an [`Attribute` object](https://www.dru
 ```
 
 The value of `key` will be replaced with an `Url` object. Note that in the example `attributes` will be replaced with an `Attribute` object before the `Url` object is created.
-
-
-## Global data and includes
-
-Please note that global data from the `_data` directory is considered to be pattern-specific data and will overwrite data inherited from a parent pattern. If you want to override data of an included pattern you can use the `with` keyword.
 
 
 ## More examples
