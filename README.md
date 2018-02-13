@@ -5,7 +5,7 @@ Since version 1.2.0 this plugin should once again work with all PatternEngines.
 
 ## Installation
 
-To install and use the plugin run:
+To install and use the plugin run the following command in the Pattern Lab root directory:
 
 ```sh
 composer require aleksip/plugin-data-transform
