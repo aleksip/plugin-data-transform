@@ -2,9 +2,9 @@
 
 namespace aleksip\DataTransformPlugin;
 
-use aleksip\DataTransformPlugin\Renderer;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use PatternLab\Console;
 use PatternLab\Data;
 use PatternLab\PatternData;
 
@@ -17,13 +17,15 @@ class DataTransformer
 {
     protected static $processed = array();
 
+    protected $verbose;
     protected $reservedKeys;
     protected $patternDataStore;
     protected $renderer;
     protected $hasRun;
 
-    public function __construct()
+    public function __construct($verbose = false)
     {
+        $this->verbose = $verbose;
         // TODO: Add an accessor function for $reservedKeys to the Data class?
         $this->reservedKeys = array("cacheBuster","link","patternSpecific","patternLabHead","patternLabFoot");
         $this->patternDataStore = PatternData::get();
@@ -43,6 +45,9 @@ class DataTransformer
             $this->processPattern($pattern);
         }
         $this->hasRun = true;
+        if ($this->verbose) {
+            Console::writeInfo('data transform plugin processing done...');
+        }
     }
 
     protected function isProcessed($pattern)

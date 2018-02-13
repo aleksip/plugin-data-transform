@@ -32,7 +32,8 @@
             "config": {
                 "plugins": {
                     "dataTransform": {
-                        "enabled": true
+                        "enabled": true,
+                        "verbose": false
                     }
                 }
             }
