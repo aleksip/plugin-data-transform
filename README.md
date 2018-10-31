@@ -11,6 +11,8 @@ To install and use the plugin run the following command in the Pattern Lab root 
 composer require aleksip/plugin-data-transform
 ```
 
+For the `Attribute` object support to work properly, your Pattern Lab config file needs to have the following setting: `twigAutoescape: false`.
+
 
 ## Features
 
