@@ -38,7 +38,7 @@ If a value contains the name of a pattern in shorthand partials syntax, the plug
 }
 ```
 
-Advanced syntax with support for passing variables and disabling access to the default data:
+Advanced syntax with support for passing variables (`with`) and disabling access to the default data (`only`):
 
 ```json
 {
@@ -55,6 +55,8 @@ Advanced syntax with support for passing variables and disabling access to the d
 ```
 
 In both examples the value of `key` will replaced with the rendered pattern.
+
+For more information about `with` and `only` please refer to the [Twig `include` documentation](https://twig.symfony.com/doc/2.x/tags/include.html).
 
 
 #### Include pseudo-pattern files
