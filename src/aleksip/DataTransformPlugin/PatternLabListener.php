@@ -22,7 +22,7 @@ class PatternLabListener extends Listener
     public function __construct()
     {
         $this->addListener('patternData.codeHelperStart', 'dataTransformer');
-        $this->addListener('twigPatternLoader.customize', 'addNodeVisitor');
+        $this->addListener('twigPatternLoader.customize', 'addNodeVisitor', -99);
         if ($this->isVerbose()) {
             Console::writeLine('data transform plugin listeners added...');
         }
