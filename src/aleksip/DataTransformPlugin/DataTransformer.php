@@ -79,7 +79,7 @@ class DataTransformer
             foreach (array_keys($patternSpecificData) as $key) {
               if (!isset($dataStore['patternSpecific'][$pattern]['data'][$key])) {
                 // Value is default global data.
-                if (is_object($dataStore[$key])) {
+                if (isset($dataStore[$key]) && is_object($dataStore[$key])) {
                   $patternSpecificData[$key] = clone $dataStore[$key];
                 }
               }
