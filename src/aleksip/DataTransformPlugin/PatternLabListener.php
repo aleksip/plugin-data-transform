@@ -24,7 +24,7 @@ class PatternLabListener extends Listener
         $this->addListener('patternData.codeHelperStart', 'dataTransformer');
         $this->addListener('twigPatternLoader.customize', 'addNodeVisitor', -99);
         if ($this->isVerbose()) {
-            Console::writeLine('data transform plugin listeners added...');
+            Console::writeLine('[data transform plugin] listeners added...');
         }
     }
 
@@ -65,7 +65,7 @@ class PatternLabListener extends Listener
         $enabled = (is_null($enabled) || (bool)$enabled);
 
         if ($this->isVerbose() && !$enabled) {
-            Console::writeLine('data transform plugin is disabled...');
+            Console::writeLine('[data transform plugin] plugin is disabled...');
         }
 
         return $enabled;

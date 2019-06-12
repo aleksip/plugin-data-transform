@@ -22,6 +22,8 @@ class DataTransformer
     protected $patternDataStore;
     protected $renderer;
     protected $hasRun;
+    protected $currentPattern;
+    protected $renderError;
 
     public function __construct($verbose = false)
     {
@@ -42,11 +44,12 @@ class DataTransformer
         Data::replaceStore($dataStore);
         // Process pattern specific data.
         foreach (array_keys($this->patternDataStore) as $pattern) {
+            $this->currentPattern = $pattern;
             $this->processPattern($pattern);
         }
         $this->hasRun = true;
         if ($this->verbose) {
-            Console::writeInfo('data transform plugin processing done...');
+            Console::writeInfo('[data transform plugin] processing done...');
         }
     }
 
@@ -161,19 +164,33 @@ class DataTransformer
         return Data::getPatternSpecificData($pattern, $extraData);
     }
 
+    public function renderErrorHandler($errno, $errstr) {
+        $this->renderError = $errstr;
+
+        return TRUE;
+    }
+
     protected function renderPattern($pattern, $data)
     {
         if (isset($this->patternDataStore[$pattern]['patternRaw'])) {
             foreach (array_keys($data) as $key) {
                 $data = $this->cloneObjects($data, $key);
             }
-            $pattern = $this->renderer->render(
+            $this->renderError = NULL;
+            set_error_handler(array($this, 'renderErrorHandler'));
+            $rendered = $this->renderer->render(
                 $this->patternDataStore[$pattern]['patternRaw'],
                 $data
             );
+            restore_error_handler();
+            if (isset($this->renderError)) {
+                Console::writeWarning('[data transform plugin] pattern ' . $this->currentPattern);
+                Console::writeWarning('error rendering ' . $pattern, true);
+                Console::writeWarning($this->renderError, true);
+            }
         }
 
-        return $pattern;
+        return $rendered;
     }
 
     protected function cloneObjects($data, $key)
