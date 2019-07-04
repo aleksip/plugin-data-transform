@@ -172,6 +172,7 @@ class DataTransformer
 
     protected function renderPattern($pattern, $data)
     {
+        $rendered = '';
         if (isset($this->patternDataStore[$pattern]['patternRaw'])) {
             foreach (array_keys($data) as $key) {
                 $data = $this->cloneObjects($data, $key);
