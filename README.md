@@ -1,8 +1,5 @@
 # Data Transform Plugin for Pattern Lab
 
-Since version 1.2.0 this plugin should once again work with all PatternEngines.
-
-
 ## Installation
 
 To install and use the plugin run the following command in the Pattern Lab root directory:
@@ -11,7 +8,37 @@ To install and use the plugin run the following command in the Pattern Lab root 
 composer require aleksip/plugin-data-transform
 ```
 
-For the `Attribute` object support to work properly, your Pattern Lab config file needs to have the following setting: `twigAutoescape: false`.
+
+## Configuration options
+
+For `Attribute` object support to work properly, your Pattern Lab `config.yml` file needs to have the following setting:
+ 
+```yaml
+twigAutoescape: false
+```
+
+The default values for Data Transform Plugin specific options in `config.yml` are:
+
+```yaml
+plugins:
+    dataTransform:
+        enabled: true
+        verbose: false
+```
+
+
+### Enabling and disabling the plugin
+
+Once installed, it is possible to enable and disable Data Transform Plugin using the `enabled` setting.
+
+
+### Verbose mode
+
+Occasionally it might happen that there is a problem with a data file, and PHP notices and/or warnings with long stack traces are displayed when Pattern Lab is generated. In a large project it can be difficult to find the problematic data file, but turning on Data Transform Plugin's verbose mode using the `verbose` setting can help.
+
+In verbose mode Data Transform plugin reports each pattern it processes and all data transform functions performed. It also suppresses regular PHP error messages and reports about errors in an easier to read way.
+
+Important note: due to the way verbose mode is implemented, it might not work if other plugins that interact with the Twig `Environment` object are used.
 
 
 ## Features
@@ -25,7 +52,7 @@ Please note that global data from the `_data` directory is considered to be patt
 
 ### Data transform functions
 
-Currently the plugin provides four transform functions for the data read by Pattern Lab. The examples provided are in JSON but Pattern Lab supports YAML too!
+Currently the plugin provides four transform functions for the data read by Pattern Lab. The examples provided are in JSON but Pattern Lab supports YAML too.
 
 
 #### Include pattern files
@@ -34,7 +61,7 @@ If a value contains the name of a pattern in shorthand partials syntax, the plug
 
 ```json
 {
-    "key": "atoms-form-element-label.html"
+    "key": "atoms-form-element-label-html"
 }
 ```
 
@@ -44,7 +71,7 @@ Advanced syntax with support for passing variables (`with`) and disabling access
 {
     "key": {
         "include()": {
-            "pattern": "atoms-form-element-label.html",
+            "pattern": "atoms-form-element-label-html",
             "with": {
                 "title": "Textfield label"
             },
@@ -86,7 +113,7 @@ It is also possible to include [pseudo-patterns](http://patternlab.io/docs/patte
 }
 ```
 
-The value of `key` will be replaced with the joined strings. Note that in the example `molecules-comment.html` is the name of a pattern in shorthand partials syntax. These will be replaced with the rendered pattern before the join.
+The value of `key` will be replaced with the joined strings. Note that in the example `molecules-comment-html` is the name of a pattern in shorthand partials syntax. These will be replaced with the rendered pattern before the join.
 
 
 #### Create Drupal `Attribute` objects
@@ -126,9 +153,4 @@ The value of `key` will be replaced with an [`Attribute` object](https://www.dru
 }
 ```
 
-The value of `key` will be replaced with an `Url` object. Note that in the example `attributes` will be replaced with an `Attribute` object before the `Url` object is created.
-
-
-## More examples
-
-Most features provided by this plugin are used in [Shila Drupal theme](https://github.com/aleksip/shila-drupal-theme).
+The value of `key` will be replaced with an `Url` object. Note that in the example the value of `attributes` will be replaced with an `Attribute` object before the `Url` object is created.
