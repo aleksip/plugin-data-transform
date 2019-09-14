@@ -17,7 +17,7 @@ class PatternDataIncludeNode extends \Twig_Node_Include
           $variables,
           $originalNode->getAttribute('only'),
           $originalNode->getAttribute('ignore_missing'),
-          $originalNode->getLine(),
+          $originalNode->getTemplateLine(),
           $originalNode->getNodeTag()
         );
 

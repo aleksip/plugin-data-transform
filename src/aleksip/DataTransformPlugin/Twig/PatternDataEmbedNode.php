@@ -18,7 +18,7 @@ class PatternDataEmbedNode extends \Twig_Node_Embed
           $variables,
           $originalNode->getAttribute('only'),
           $originalNode->getAttribute('ignore_missing'),
-          $originalNode->getLine(),
+          $originalNode->getTemplateLine(),
           $originalNode->getNodeTag()
         );
 
