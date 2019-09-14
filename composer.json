@@ -25,7 +25,9 @@
     },
     "require": {
         "php": ">=5.5.9",
-        "pattern-lab/core": "^2.6.3"
+        "pattern-lab/core": "^2.6.3",
+        "drupal/core-render": "^8.7",
+        "drupal/core-utility": "^8.7"
     },
     "extra": {
         "patternlab": {
