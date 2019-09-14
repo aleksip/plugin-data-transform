@@ -2,8 +2,6 @@
 
 namespace aleksip\DataTransformPlugin\Twig;
 
-use Drupal\Core\Template\Attribute;
-
 trait PatternDataNodeTrait
 {
     protected $data;
