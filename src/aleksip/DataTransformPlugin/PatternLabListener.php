@@ -3,8 +3,8 @@
 namespace aleksip\DataTransformPlugin;
 
 use aleksip\DataTransformPlugin\Twig\PatternDataNodeVisitor;
+use aleksip\DataTransformPlugin\Twig\TwigEnvironmentDecorator;
 use PatternLab\Config;
-use PatternLab\Console;
 use PatternLab\Listener;
 use PatternLab\PatternEngine;
 use PatternLab\PatternEngine\Twig\TwigUtil;
@@ -23,58 +23,40 @@ class PatternLabListener extends Listener
     {
         $this->addListener('patternData.codeHelperStart', 'dataTransformer');
         $this->addListener('twigPatternLoader.customize', 'addNodeVisitor', -99);
-        if ($this->isVerbose()) {
-            Console::writeLine('[data transform plugin] listeners added...');
-        }
+        DataTransformPlugin::writeInfo('listeners added');
     }
 
     public function dataTransformer()
     {
-        if (!$this->isEnabled()) {
+        if (!DataTransformPlugin::isEnabled()) {
             return;
         }
 
-        $this->dataTransformer = new DataTransformer($this->isVerbose());
+        $this->dataTransformer = new DataTransformer();
 
         if (Config::getOption('patternExtension') !== 'twig') {
             $patternEngineBasePath = PatternEngine::getInstance()->getBasePath();
             $patternLoaderClass = $patternEngineBasePath.'\Loaders\PatternLoader';
-            $patternLoader = new $patternLoaderClass(array());
+            $patternLoader = new $patternLoaderClass([]);
             $this->dataTransformer->run(new Renderer($patternLoader));
         }
     }
 
     public function addNodeVisitor()
     {
-        if (!$this->isEnabled()) {
+        if (!DataTransformPlugin::isEnabled()) {
             return;
         }
 
         $nodeVisitor = new PatternDataNodeVisitor($this->dataTransformer);
 
         $env = TwigUtil::getInstance();
+        if (DataTransformPlugin::isVerbose()) {
+            $env = new TwigEnvironmentDecorator($env);
+        }
         $env->addNodeVisitor($nodeVisitor);
         TwigUtil::setInstance($env);
 
         $this->dataTransformer->run(new Renderer($env));
-    }
-
-    protected function isEnabled()
-    {
-        $enabled = Config::getOption('plugins.dataTransform.enabled');
-        $enabled = (is_null($enabled) || (bool)$enabled);
-
-        if ($this->isVerbose() && !$enabled) {
-            Console::writeLine('[data transform plugin] plugin is disabled...');
-        }
-
-        return $enabled;
-    }
-
-    protected function isVerbose()
-    {
-        $verbose = Config::getOption('plugins.dataTransform.verbose');
-
-        return (!is_null($verbose) && (bool)$verbose);
     }
 }
