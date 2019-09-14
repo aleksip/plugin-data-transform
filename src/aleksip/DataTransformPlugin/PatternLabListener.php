@@ -21,17 +21,15 @@ class PatternLabListener extends Listener
 
     public function __construct()
     {
-        $this->addListener('patternData.codeHelperStart', 'dataTransformer');
-        $this->addListener('twigPatternLoader.customize', 'addNodeVisitor', -99);
-        DataTransformPlugin::writeInfo('listeners added');
+        if (DataTransformPlugin::isEnabled()) {
+            $this->addListener('patternData.codeHelperStart', 'dataTransformer');
+            $this->addListener('twigPatternLoader.customize', 'addNodeVisitor', -99);
+            DataTransformPlugin::writeInfo('listeners added');
+        }
     }
 
     public function dataTransformer()
     {
-        if (!DataTransformPlugin::isEnabled()) {
-            return;
-        }
-
         $this->dataTransformer = new DataTransformer();
 
         if (Config::getOption('patternExtension') !== 'twig') {
@@ -44,10 +42,6 @@ class PatternLabListener extends Listener
 
     public function addNodeVisitor()
     {
-        if (!DataTransformPlugin::isEnabled()) {
-            return;
-        }
-
         $nodeVisitor = new PatternDataNodeVisitor($this->dataTransformer);
 
         $env = TwigUtil::getInstance();
