@@ -36,9 +36,11 @@ class DataTransformer
         }
         $this->renderer = $renderer;
         // Process global data.
+        DataTransformPlugin::writeInfo('processing global data');
         $dataStore = $this->processData(Data::get());
         Data::replaceStore($dataStore);
         // Process pattern specific data.
+        DataTransformPlugin::writeInfo('processing pattern specific data');
         foreach (array_keys($this->patternDataStore) as $pattern) {
             $this->currentPattern = $pattern;
             $this->processPattern($pattern);
